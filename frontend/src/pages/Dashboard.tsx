@@ -39,6 +39,58 @@ interface DashboardData {
   meme: Meme;
 }
 
+function FeedbackPipelineCard() {
+  const steps = [
+    {
+      icon: '👍',
+      title: 'You Vote',
+      description: 'Rate each section after reading',
+    },
+    {
+      icon: '🗄️',
+      title: 'Saved to the Database',
+      description: 'Your votes are saved to our database, linked to your profile and preferences',
+    },
+    {
+      icon: '📊',
+      title: 'Patterns Emerge',
+      description: 'Aggregated votes reveal which insights, coins, and news topics users find most valuable',
+    },
+    {
+      icon: '🤖',
+      title: 'Better Recommendations',
+      description: 'Future recommendations can use this signal to prioritize relevant content and reduce noise',
+    },
+  ];
+
+  return (
+    <Card className="bg-white/5 border-white/10 text-white lg:col-span-2">
+      <CardHeader className="pb-3 px-4 sm:px-6">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          🧠 How Feedback Helps Personalize the AI
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-4 sm:px-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {steps.map((step, i) => (
+            <div key={i} className="flex flex-col items-center text-center gap-2 relative">
+              <span className="text-2xl">{step.icon}</span>
+              <p className="text-sm font-semibold text-white">{step.title}</p>
+              <p className="text-xs text-white/50">{step.description}</p>
+              {i < steps.length - 1 && (
+                <span className="hidden sm:block absolute right-0 top-3 translate-x-1/2 text-white/20 text-lg">→</span>
+              )}
+            </div>
+          ))}
+        </div>
+        <p className="text-xs text-white/30 text-center mt-6 italic">
+          Your onboarding preferences and daily votes create the feedback signal for future personalization.
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
 function VoteButtons({ sectionType, contentId }: { sectionType: string; contentId: string }) {
   const [voted, setVoted] = useState<number | null>(null);
 
@@ -227,6 +279,9 @@ export default function Dashboard() {
                 <VoteButtons sectionType="meme" contentId={data.meme.id} />
               </CardContent>
             </Card>
+
+            {/* Feedback Pipeline */}
+            <FeedbackPipelineCard />
 
           </div>
         )}
