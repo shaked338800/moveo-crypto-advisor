@@ -16,7 +16,9 @@
       "Bash(npx shadcn@latest init --help)",
       "Bash(npx shadcn@latest init -b radix --yes)",
       "Bash(npx shadcn@latest init -b radix -p nova --yes)",
-      "Bash(npx shadcn@latest add button input label card form progress --yes)"
+      "Bash(npx shadcn@latest add button input label card form progress --yes)",
+      "Bash(npx shadcn@latest add badge --yes)",
+      "Bash(npx prisma:*)"
     ]
   }
 }
