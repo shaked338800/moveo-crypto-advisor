@@ -232,10 +232,10 @@ export default function Dashboard() {
                   {data.news.map((article, i) => (
                     <a
                       key={i}
-                      href={article.url}
-                      target="_blank"
+                      href={article.url !== '#' ? article.url : undefined}
+                      target={article.url !== '#' ? '_blank' : undefined}
                       rel="noreferrer"
-                      className="block p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all border border-white/5"
+                      className={`block p-3 rounded-lg bg-white/5 border border-white/5 transition-all ${article.url !== '#' ? 'hover:bg-white/10 cursor-pointer' : 'cursor-default'}`}
                     >
                       {article.image && (
                         <img
