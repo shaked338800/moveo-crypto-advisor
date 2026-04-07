@@ -1,20 +1,17 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
 import prisma from '../prisma';
+import { voteSchema } from '../schemas/votes.schema';
 
 export const submitVote = async (req: AuthRequest, res: Response) => {
   try {
-    const { sectionType, contentId, vote } = req.body;
-
-    if (!sectionType || !contentId || vote === undefined) {
-      res.status(400).json({ error: 'All fields are required' });
+    const result = voteSchema.safeParse(req.body);
+    if (!result.success) {
+      res.status(400).json({ error: result.error.issues[0].message });
       return;
     }
 
-    if (vote !== 1 && vote !== -1) {
-      res.status(400).json({ error: 'Vote must be 1 or -1' });
-      return;
-    }
+    const { sectionType, contentId, vote } = result.data;
 
     // Upsert — one vote per user per content item
     await prisma.vote.upsert({

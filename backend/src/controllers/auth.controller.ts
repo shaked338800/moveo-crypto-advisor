@@ -2,15 +2,17 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../prisma';
+import { registerSchema, loginSchema } from '../schemas/auth.schema';
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      res.status(400).json({ error: 'All fields are required' });
+    const result = registerSchema.safeParse(req.body);
+    if (!result.success) {
+      res.status(400).json({ error: result.error.issues[0].message });
       return;
     }
+
+    const { name, email, password } = result.data;
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
@@ -46,12 +48,13 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      res.status(400).json({ error: 'All fields are required' });
+    const result = loginSchema.safeParse(req.body);
+    if (!result.success) {
+      res.status(400).json({ error: result.error.issues[0].message });
       return;
     }
+
+    const { email, password } = result.data;
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {

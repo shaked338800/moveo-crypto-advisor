@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { loginApi } from '@/api/auth.api';
+import { loginSchema } from '@/schemas/auth.schema';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -28,6 +29,11 @@ export default function Login() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    const result = loginSchema.safeParse(form);
+    if (!result.success) {
+      setError(result.error.issues[0].message);
+      return;
+    }
     mutate();
   };
 

@@ -1,15 +1,17 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
 import prisma from '../prisma';
+import { preferencesSchema } from '../schemas/user.schema';
 
 export const savePreferences = async (req: AuthRequest, res: Response) => {
   try {
-    const { coins, investorType, contentTypes } = req.body;
-
-    if (!coins || !investorType || !contentTypes) {
-      res.status(400).json({ error: 'All preference fields are required' });
+    const result = preferencesSchema.safeParse(req.body);
+    if (!result.success) {
+      res.status(400).json({ error: result.error.issues[0].message });
       return;
     }
+
+    const { coins, investorType, contentTypes } = result.data;
 
     await prisma.preference.upsert({
       where: { userId: req.userId! },
