@@ -1,0 +1,72 @@
+### Health check
+GET http://localhost:5000/api/health
+
+###
+
+### Register a new user
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "test@test.com",
+  "password": "123456"
+}
+
+###
+
+### Login with the same user
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "123456"
+}
+
+###
+
+### Try registering with the same email again (should fail with 409)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "test@test.com",
+  "password": "123456"
+}
+
+###
+
+### Try login with wrong password (should fail with 401)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "wrongpassword"
+}
+
+###
+
+### Get current user - replace TOKEN with the token from login response
+GET http://localhost:5000/api/user/me
+Authorization: Bearer TOKEN
+
+###
+
+### Save onboarding preferences - replace TOKEN with the token from login response
+POST http://localhost:5000/api/user/preferences
+Content-Type: application/json
+Authorization: Bearer TOKEN
+
+{
+  "coins": ["bitcoin", "ethereum"],
+  "investorType": "HODLer",
+  "contentTypes": ["Market News", "Charts"]
+}
+
+###
+
+### Try /me without token (should fail with 401)
+GET http://localhost:5000/api/user/me
