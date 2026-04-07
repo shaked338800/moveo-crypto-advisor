@@ -34,9 +34,9 @@ export default function Onboarding() {
   const progress = (step / 3) * 100;
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
-      <div className="absolute top-[-10rem] left-[-10rem] w-[40rem] h-[40rem] bg-purple-700 opacity-20 rounded-full blur-3xl" />
-      <div className="absolute bottom-[-10rem] right-[-10rem] w-[40rem] h-[40rem] bg-blue-700 opacity-20 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4 py-8">
+      <div className="absolute top-[-10rem] left-[-10rem] w-[30rem] h-[30rem] sm:w-[40rem] sm:h-[40rem] bg-purple-700 opacity-20 rounded-full blur-3xl" />
+      <div className="absolute bottom-[-10rem] right-[-10rem] w-[30rem] h-[30rem] sm:w-[40rem] sm:h-[40rem] bg-blue-700 opacity-20 rounded-full blur-3xl" />
 
       <Card className="w-full max-w-lg bg-white/5 border-white/10 text-white relative z-10">
         <CardHeader>
@@ -48,33 +48,32 @@ export default function Onboarding() {
 
           {step === 1 && (
             <>
-              <CardTitle className="text-xl">Which crypto assets interest you?</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Which crypto assets interest you?</CardTitle>
               <CardDescription className="text-white/50">Select all that apply</CardDescription>
             </>
           )}
           {step === 2 && (
             <>
-              <CardTitle className="text-xl">What type of investor are you?</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">What type of investor are you?</CardTitle>
               <CardDescription className="text-white/50">Pick one that fits you best</CardDescription>
             </>
           )}
           {step === 3 && (
             <>
-              <CardTitle className="text-xl">What content do you want to see?</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">What content do you want to see?</CardTitle>
               <CardDescription className="text-white/50">Select all that apply</CardDescription>
             </>
           )}
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Step 1 — Coins */}
           {step === 1 && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {COINS.map((coin) => (
                 <button
                   key={coin}
                   onClick={() => toggleItem(coins, setCoins, coin)}
-                  className={`py-3 px-4 rounded-lg border text-sm font-medium transition-all ${
+                  className={`py-3 px-3 sm:px-4 rounded-lg border text-sm font-medium transition-all ${
                     coins.includes(coin)
                       ? 'bg-white text-black border-white'
                       : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
@@ -86,14 +85,13 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 2 — Investor type */}
           {step === 2 && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
               {INVESTOR_TYPES.map((type) => (
                 <button
                   key={type}
                   onClick={() => setInvestorType(type)}
-                  className={`py-3 px-4 rounded-lg border text-sm font-medium transition-all ${
+                  className={`py-3 px-3 sm:px-4 rounded-lg border text-sm font-medium transition-all ${
                     investorType === type
                       ? 'bg-white text-black border-white'
                       : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
@@ -105,14 +103,13 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 3 — Content types */}
           {step === 3 && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {CONTENT_TYPES.map((type) => (
                 <button
                   key={type}
                   onClick={() => toggleItem(contentTypes, setContentTypes, type)}
-                  className={`py-3 px-4 rounded-lg border text-sm font-medium transition-all ${
+                  className={`py-3 px-3 sm:px-4 rounded-lg border text-sm font-medium transition-all ${
                     contentTypes.includes(type)
                       ? 'bg-white text-black border-white'
                       : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
@@ -129,7 +126,7 @@ export default function Onboarding() {
               <Button
                 variant="outline"
                 onClick={() => setStep(step - 1)}
-                className="border-white/10 text-white hover:bg-white/10"
+                className="border-white/20 text-white hover:bg-white/10"
               >
                 Back
               </Button>

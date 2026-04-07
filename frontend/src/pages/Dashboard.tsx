@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
-// --- Types ---
 interface Coin {
   id: string;
   name: string;
@@ -40,7 +39,6 @@ interface DashboardData {
   meme: Meme;
 }
 
-// --- Vote Buttons ---
 function VoteButtons({ sectionType, contentId }: { sectionType: string; contentId: string }) {
   const [voted, setVoted] = useState<number | null>(null);
 
@@ -75,7 +73,6 @@ function VoteButtons({ sectionType, contentId }: { sectionType: string; contentI
   );
 }
 
-// --- Main Dashboard ---
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -93,58 +90,61 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
+      <header className="border-b border-white/10 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold">CryptoAdvisor</h1>
-          <p className="text-white/50 text-sm">Welcome back, {user?.name}</p>
+          <h1 className="text-lg sm:text-xl font-bold">CryptoAdvisor</h1>
+          <p className="text-white/50 text-xs sm:text-sm">Welcome back, {user?.name}</p>
         </div>
         <Button
           onClick={handleLogout}
           variant="outline"
-          className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-black"
+          size="sm"
+          className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-black text-xs sm:text-sm"
         >
           Logout
         </Button>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {isLoading && (
           <div className="flex items-center justify-center h-64">
-            <p className="text-white/50 animate-pulse">Loading your dashboard...</p>
+            <p className="text-white/50 animate-pulse text-sm sm:text-base">Loading your dashboard...</p>
           </div>
         )}
 
         {isError && (
           <div className="flex items-center justify-center h-64">
-            <p className="text-red-400">Failed to load dashboard. Make sure the backend is running.</p>
+            <p className="text-red-400 text-sm sm:text-base text-center px-4">
+              Failed to load dashboard. Make sure the backend is running.
+            </p>
           </div>
         )}
 
         {data && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
 
             {/* Coin Prices */}
             <Card className="bg-white/5 border-white/10 text-white">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
+              <CardHeader className="pb-3 px-4 sm:px-6">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   📈 Coin Prices
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-2 sm:space-y-3 px-4 sm:px-6">
                 {data.coinPrices.length === 0 && (
                   <p className="text-white/40 text-sm">No coin data available.</p>
                 )}
                 {data.coinPrices.map((coin) => (
                   <div key={coin.id} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                    <div className="flex items-center gap-3">
-                      <img src={coin.image} alt={coin.name} className="w-7 h-7 rounded-full" />
-                      <div>
-                        <p className="font-medium text-sm">{coin.name}</p>
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                      <img src={coin.image} alt={coin.name} className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex-shrink-0" />
+                      <div className="min-w-0">
+                        <p className="font-medium text-xs sm:text-sm truncate">{coin.name}</p>
                         <p className="text-white/40 text-xs">{coin.symbol}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-sm">${coin.price.toLocaleString()}</p>
+                    <div className="text-right flex-shrink-0 ml-2">
+                      <p className="font-semibold text-xs sm:text-sm">${coin.price.toLocaleString()}</p>
                       <p className={`text-xs font-medium ${coin.change24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                         {coin.change24h >= 0 ? '+' : ''}{coin.change24h?.toFixed(2)}%
                       </p>
@@ -157,12 +157,12 @@ export default function Dashboard() {
 
             {/* AI Insight */}
             <Card className="bg-white/5 border-white/10 text-white">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
+              <CardHeader className="pb-3 px-4 sm:px-6">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   🤖 AI Insight of the Day
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-4 sm:px-6">
                 <p className="text-white/80 text-sm leading-relaxed">{data.aiInsight}</p>
                 <VoteButtons sectionType="ai" contentId="ai-insight" />
               </CardContent>
@@ -170,13 +170,13 @@ export default function Dashboard() {
 
             {/* Market News */}
             <Card className="bg-white/5 border-white/10 text-white lg:col-span-2">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
+              <CardHeader className="pb-3 px-4 sm:px-6">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   📰 Market News
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="px-4 sm:px-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {data.news.map((article, i) => (
                     <a
                       key={i}
@@ -189,7 +189,7 @@ export default function Dashboard() {
                         <img
                           src={article.image}
                           alt={article.title}
-                          className="w-full h-32 object-cover rounded-md mb-3"
+                          className="w-full h-28 sm:h-32 object-cover rounded-md mb-3"
                           onError={(e) => (e.currentTarget.style.display = 'none')}
                         />
                       )}
@@ -211,17 +211,17 @@ export default function Dashboard() {
 
             {/* Fun Meme */}
             <Card className="bg-white/5 border-white/10 text-white lg:col-span-2">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
+              <CardHeader className="pb-3 px-4 sm:px-6">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   😂 Crypto Meme of the Day
                 </CardTitle>
               </CardHeader>
-              <CardContent className="flex flex-col items-center">
-                <p className="text-white/60 text-sm mb-3 italic">"{data.meme.title}"</p>
+              <CardContent className="flex flex-col items-center px-4 sm:px-6">
+                <p className="text-white/60 text-sm mb-3 italic text-center">"{data.meme.title}"</p>
                 <img
                   src={data.meme.url}
                   alt={data.meme.title}
-                  className="max-h-80 rounded-xl object-contain"
+                  className="w-full max-w-sm sm:max-w-md max-h-72 sm:max-h-80 rounded-xl object-contain"
                   onError={(e) => (e.currentTarget.style.display = 'none')}
                 />
                 <VoteButtons sectionType="meme" contentId={data.meme.id} />

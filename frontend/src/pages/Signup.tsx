@@ -38,9 +38,9 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
-      <div className="absolute top-[-10rem] left-[-10rem] w-[40rem] h-[40rem] bg-purple-700 opacity-20 rounded-full blur-3xl" />
-      <div className="absolute bottom-[-10rem] right-[-10rem] w-[40rem] h-[40rem] bg-blue-700 opacity-20 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4 py-8">
+      <div className="absolute top-[-10rem] left-[-10rem] w-[30rem] h-[30rem] sm:w-[40rem] sm:h-[40rem] bg-purple-700 opacity-20 rounded-full blur-3xl" />
+      <div className="absolute bottom-[-10rem] right-[-10rem] w-[30rem] h-[30rem] sm:w-[40rem] sm:h-[40rem] bg-blue-700 opacity-20 rounded-full blur-3xl" />
 
       <Card className="w-full max-w-md bg-white/5 border-white/10 text-white relative z-10">
         <CardHeader className="text-center">
