@@ -1,7 +1,7 @@
 # Project Status
 
 ## Stack
-- Frontend: React + Vite + TypeScript
+- Frontend: React + Vite + TypeScript + shadcn/ui + React Query
 - Backend: Node.js + Express + TypeScript
 - Database: PostgreSQL (Neon) via Prisma ORM
 - Auth: JWT + bcryptjs
@@ -19,26 +19,32 @@
 - [x] `prisma migrate dev` ran — tables created in DB
 - [x] Auth packages installed (jsonwebtoken, bcryptjs)
 - [x] Auth controller and routes created and tested (register, login, edge cases)
+- [x] Auth middleware (JWT verification)
+- [x] Onboarding route + controller (GET /api/user/me, POST /api/user/preferences)
+- [x] Frontend scaffold (React + Vite + TypeScript)
+- [x] Tailwind CSS + shadcn/ui installed
+- [x] AuthContext + ProtectedRoute
+- [x] API layer with axios (auth.api.ts)
+- [x] Home page
+- [x] Login page
+- [x] Signup page
+- [x] Onboarding page (3-step form)
+- [x] Dashboard placeholder
+- [x] Mono-repo setup (frontend + backend under one git repo)
 
 ## In Progress
-- [ ] Auth middleware (JWT verification)
+- [ ] Dashboard routes — backend (coins, news, AI, meme)
+- [ ] Dashboard page — frontend (4 sections with voting)
 
 ## Not Started
-- [ ] Onboarding route + controller
-- [ ] Dashboard routes (coins, news, AI, meme)
 - [ ] Votes route + controller
-- [ ] Frontend scaffold
-- [ ] Frontend pages (Login, Signup, Onboarding, Dashboard)
-- [ ] Frontend auth context
 - [ ] Deployment
 
 ---
 
 ## Current Goal
-Verify auth routes work correctly end-to-end.
+Build the dashboard — backend routes first, then frontend sections.
 
 ## Next Step
-1. Add try/catch to auth controller
-2. Test POST /api/auth/register with Postman
-3. Test POST /api/auth/login with Postman
-4. Confirm JWT is returned and user appears in DB
+1. Backend: `GET /api/dashboard` — returns coins, news, AI insight, meme based on user preferences
+2. Frontend: Dashboard page with 4 sections + voting buttons
