@@ -3,6 +3,19 @@ import { AuthRequest } from '../middleware/auth.middleware';
 import prisma from '../prisma';
 import { voteSchema } from '../schemas/votes.schema';
 
+export const getVotes = async (req: AuthRequest, res: Response) => {
+  try {
+    const votes = await prisma.vote.findMany({
+      where: { userId: req.userId! },
+      select: { sectionType: true, contentId: true, vote: true },
+    });
+    res.json(votes);
+  } catch (err) {
+    console.error('Get votes error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 export const submitVote = async (req: AuthRequest, res: Response) => {
   try {
     const result = voteSchema.safeParse(req.body);
@@ -14,7 +27,7 @@ export const submitVote = async (req: AuthRequest, res: Response) => {
     const { sectionType, contentId, vote } = result.data;
 
     // Upsert — one vote per user per content item
-    await prisma.vote.upsert({
+    const saved = await prisma.vote.upsert({
       where: {
         userId_sectionType_contentId: {
           userId: req.userId!,
@@ -24,9 +37,10 @@ export const submitVote = async (req: AuthRequest, res: Response) => {
       },
       update: { vote },
       create: { userId: req.userId!, sectionType, contentId, vote },
+      select: { sectionType: true, contentId: true, vote: true },
     });
 
-    res.json({ message: 'Vote saved' });
+    res.json(saved);
   } catch (err) {
     console.error('Vote error:', err);
     res.status(500).json({ error: 'Internal server error' });

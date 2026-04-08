@@ -24,7 +24,7 @@ export const getDashboard = async (req: AuthRequest, res: Response) => {
       getCoinPrices(coins),
       getCryptoNews(coins),
       getAiInsight(coins, investorType),
-      Promise.resolve(getRandomMeme()),
+      getRandomMeme(),
     ]);
 
     res.json({ coinPrices, news, aiInsight, meme });
