@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useAuth } from '@/context/AuthContext';
-import { getDashboardApi, submitVoteApi } from '@/api/auth.api';
+import { getDashboardApi, getVotesApi, submitVoteApi } from '@/api/auth.api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -91,8 +91,8 @@ function FeedbackPipelineCard() {
   );
 }
 
-function VoteButtons({ sectionType, contentId }: { sectionType: string; contentId: string }) {
-  const [voted, setVoted] = useState<number | null>(null);
+function VoteButtons({ sectionType, contentId, initialVote = null }: { sectionType: string; contentId: string; initialVote?: number | null }) {
+  const [voted, setVoted] = useState<number | null>(initialVote);
 
   const { mutate } = useMutation({
     mutationFn: (vote: number) => submitVoteApi(sectionType, contentId, vote),
@@ -133,6 +133,14 @@ export default function Dashboard() {
     queryKey: ['dashboard'],
     queryFn: getDashboardApi,
   });
+
+  const { data: votes = [] } = useQuery<{ sectionType: string; contentId: string; vote: number }[]>({
+    queryKey: ['votes'],
+    queryFn: getVotesApi,
+  });
+
+  const getVote = (sectionType: string, contentId: string) =>
+    votes.find((v) => v.sectionType === sectionType && v.contentId === contentId)?.vote ?? null;
 
   const handleLogout = () => {
     logout();
@@ -203,7 +211,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                 ))}
-                <VoteButtons sectionType="coins" contentId="coin-prices" />
+                <VoteButtons sectionType="coins" contentId="coin-prices" initialVote={getVote('coins', 'coin-prices')} />
               </CardContent>
             </Card>
 
@@ -216,7 +224,7 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="px-4 sm:px-6">
                 <p className="text-white/80 text-sm leading-relaxed">{data.aiInsight}</p>
-                <VoteButtons sectionType="ai" contentId="ai-insight" />
+                <VoteButtons sectionType="ai" contentId="ai-insight" initialVote={getVote('ai', 'ai-insight')} />
               </CardContent>
             </Card>
 
@@ -229,9 +237,9 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="px-4 sm:px-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                  {data.news.map((article, i) => (
+                  {data.news.map((article) => (
                     <a
-                      key={i}
+                      key={article.url || article.title}
                       href={article.url !== '#' ? article.url : undefined}
                       target={article.url !== '#' ? '_blank' : undefined}
                       rel="noreferrer"
@@ -257,7 +265,7 @@ export default function Dashboard() {
                     </a>
                   ))}
                 </div>
-                <VoteButtons sectionType="news" contentId="market-news" />
+                <VoteButtons sectionType="news" contentId="market-news" initialVote={getVote('news', 'market-news')} />
               </CardContent>
             </Card>
 
@@ -276,7 +284,7 @@ export default function Dashboard() {
                   className="w-full max-w-sm sm:max-w-md max-h-72 sm:max-h-80 rounded-xl object-contain"
                   onError={(e) => (e.currentTarget.style.display = 'none')}
                 />
-                <VoteButtons sectionType="meme" contentId={data.meme.id} />
+                <VoteButtons sectionType="meme" contentId={data.meme.id} initialVote={getVote('meme', data.meme.id)} />
               </CardContent>
             </Card>
 

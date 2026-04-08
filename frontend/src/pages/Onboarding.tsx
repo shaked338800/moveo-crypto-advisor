@@ -19,11 +19,16 @@ export default function Onboarding() {
   const [investorType, setInvestorType] = useState('');
   const [contentTypes, setContentTypes] = useState<string[]>([]);
 
+  const [error, setError] = useState('');
+
   const { mutate, isPending } = useMutation({
     mutationFn: () => savePreferencesApi(coins, investorType, contentTypes),
     onSuccess: () => {
       if (user) setUser({ ...user, onboardingCompleted: true });
       navigate('/dashboard');
+    },
+    onError: (err: any) => {
+      setError(err.response?.data?.error || 'Something went wrong. Please try again.');
     },
   });
 
@@ -120,6 +125,8 @@ export default function Onboarding() {
               ))}
             </div>
           )}
+
+          {error && <p className="text-red-400 text-sm">{error}</p>}
 
           <div className="flex justify-between pt-2">
             {step > 1 ? (

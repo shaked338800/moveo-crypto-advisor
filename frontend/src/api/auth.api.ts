@@ -34,5 +34,8 @@ export const savePreferencesApi = (
 export const getDashboardApi = () =>
   api.get('/api/dashboard').then((r) => r.data);
 
+export const getVotesApi = () =>
+  api.get('/api/votes').then((r) => r.data);
+
 export const submitVoteApi = (sectionType: string, contentId: string, vote: number) =>
   api.post('/api/votes', { sectionType, contentId, vote }).then((r) => r.data);
