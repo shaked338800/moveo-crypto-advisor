@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
 }));
-app.use(morgan('dev'));
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express.json());
 
 app.get('/api/health', (_req, res) => {
