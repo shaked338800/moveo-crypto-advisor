@@ -271,7 +271,7 @@ function EditPreferencesModal({ current, onClose }: { current: Preference; onClo
   );
 }
 
-function MemeImage({ url, alt, id }: { url: string; alt: string; id: string }) {
+function MemeImage({ url, alt }: { url: string; alt: string }) {
   const [loaded, setLoaded] = useState(false);
   const [errored, setErrored] = useState(false);
 
@@ -557,7 +557,7 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="flex flex-col items-center px-4 sm:px-6">
                 <p className="text-white/60 text-sm mb-3 italic text-center">"{data.meme.title}"</p>
-                <MemeImage key={data.meme.id} url={data.meme.url} alt={data.meme.title} id={data.meme.id} />
+                <MemeImage key={data.meme.id} url={data.meme.url} alt={data.meme.title} />
                 <VoteButtons sectionType="meme" contentId={data.meme.id} initialVote={getVote('meme', data.meme.id)} />
               </CardContent>
             </Card>
