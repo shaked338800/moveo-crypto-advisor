@@ -21,7 +21,11 @@
       "Bash(npx prisma:*)",
       "Bash(npx tsc:*)",
       "Bash(gh pr:*)",
-      "Bash(gh auth:*)"
+      "Bash(gh auth:*)",
+      "Bash(node -e \"console.log\\(require\\('crypto'\\).randomBytes\\(64\\).toString\\('hex'\\)\\)\")",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(curl -s https://moveo-crypto-advisor.onrender.com/api/health)"
     ]
   }
 }

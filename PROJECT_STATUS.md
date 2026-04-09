@@ -33,18 +33,18 @@
 - [x] Mono-repo setup (frontend + backend under one git repo)
 
 ## In Progress
-- [ ] Dashboard routes — backend (coins, news, AI, meme)
-- [ ] Dashboard page — frontend (4 sections with voting)
+- [ ] Deployment — environment variables need to be set in Render + Vercel dashboards
 
 ## Not Started
-- [ ] Votes route + controller
-- [ ] Deployment
+- (nothing — all features implemented)
 
 ---
 
-## Current Goal
-Build the dashboard — backend routes first, then frontend sections.
+## Completed (recently confirmed)
+- [x] Dashboard routes — backend (coins, news, AI, meme)
+- [x] Dashboard page — frontend (4 sections with voting)
+- [x] Votes route + controller (GET /api/votes, POST /api/votes with upsert)
+- [x] Services: CoinGecko, NewsData, OpenRouter AI, static meme list (all with fallbacks)
 
-## Next Step
-1. Backend: `GET /api/dashboard` — returns coins, news, AI insight, meme based on user preferences
-2. Frontend: Dashboard page with 4 sections + voting buttons
+## Current Goal
+Deploy — set production env vars in Render (backend) and Vercel (frontend).
