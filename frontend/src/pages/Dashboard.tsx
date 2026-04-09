@@ -271,6 +271,30 @@ function EditPreferencesModal({ current, onClose }: { current: Preference; onClo
   );
 }
 
+function MemeImage({ url, alt, id }: { url: string; alt: string; id: string }) {
+  const [loaded, setLoaded] = useState(false);
+  const [errored, setErrored] = useState(false);
+
+  if (errored) {
+    return <p className="text-white/30 text-sm py-8">Meme unavailable</p>;
+  }
+
+  return (
+    <>
+      {!loaded && <div className="w-full max-w-sm sm:max-w-md h-48 rounded-xl bg-white/5 animate-pulse" />}
+      <img
+        key={id}
+        src={url}
+        alt={alt}
+        className="w-full max-w-sm sm:max-w-md max-h-72 sm:max-h-80 rounded-xl object-contain"
+        style={{ display: loaded ? 'block' : 'none' }}
+        onLoad={() => setLoaded(true)}
+        onError={() => setErrored(true)}
+      />
+    </>
+  );
+}
+
 function FeedbackPipelineCard() {
   const steps = [
     {
@@ -534,12 +558,7 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="flex flex-col items-center px-4 sm:px-6">
                 <p className="text-white/60 text-sm mb-3 italic text-center">"{data.meme.title}"</p>
-                <img
-                  src={data.meme.url}
-                  alt={data.meme.title}
-                  className="w-full max-w-sm sm:max-w-md max-h-72 sm:max-h-80 rounded-xl object-contain"
-                  onError={(e) => (e.currentTarget.style.display = 'none')}
-                />
+                <MemeImage url={data.meme.url} alt={data.meme.title} id={data.meme.id} />
                 <VoteButtons sectionType="meme" contentId={data.meme.id} initialVote={getVote('meme', data.meme.id)} />
               </CardContent>
             </Card>
