@@ -18,9 +18,11 @@ The application adapts to user preferences and provides curated daily insights u
 * Onboarding flow to capture user preferences
 * Personalized dashboard with:
   * 💰 Coin Prices (CoinGecko API)
+  * 📈 7-day price chart per coin (interactive modal)
   * 📰 Market News (NewsData.io)
   * 🤖 AI Insight of the Day (OpenRouter → Mistral 7B)
   * 😂 Crypto Meme of the Day
+* ✏️ Edit preferences from the dashboard at any time
 * 👍👎 Voting system for each content section
 * Feedback loop designed for future personalization
 
