@@ -221,6 +221,7 @@ export default function Dashboard() {
                 <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   🤖 AI Insight of the Day
                 </CardTitle>
+                <p className="text-white/30 text-xs mt-1">Generated based on current market trends</p>
               </CardHeader>
               <CardContent className="px-4 sm:px-6">
                 <p className="text-white/80 text-sm leading-relaxed">{data.aiInsight}</p>
