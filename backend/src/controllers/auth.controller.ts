@@ -38,6 +38,7 @@ export const register = async (req: Request, res: Response) => {
         name: user.name,
         email: user.email,
         onboardingCompleted: user.onboardingCompleted,
+        preference: null,
       },
     });
   } catch (err) {
@@ -56,7 +57,10 @@ export const login = async (req: Request, res: Response) => {
 
     const { email, password } = result.data;
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: { preference: true },
+    });
     if (!user) {
       res.status(401).json({ error: 'Invalid credentials' });
       return;
@@ -81,6 +85,7 @@ export const login = async (req: Request, res: Response) => {
         name: user.name,
         email: user.email,
         onboardingCompleted: user.onboardingCompleted,
+        preference: user.preference,
       },
     });
   } catch (err) {

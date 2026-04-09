@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // On mount, if token exists, fetch current user to rehydrate state
   useEffect(() => {
-    if (token && !user) {
+    if (token) {
       getMeApi()
         .then(setUser)
         .catch(() => {
