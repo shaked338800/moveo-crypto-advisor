@@ -1,29 +1,100 @@
 # AI Crypto Advisor
 
-A personalized crypto investor dashboard built as a coding assignment for Moveo.
+A full-stack personalized crypto dashboard built as part of a coding assignment for Moveo.
 
-The app learns about the user through a short onboarding quiz, then displays daily AI-curated content tailored to their crypto interests.
+The application adapts to user preferences and provides curated daily insights using external data sources and AI.
 
-## Features
+---
 
-- JWT-based authentication (register / login)
-- Onboarding quiz to capture user preferences
-- Daily dashboard with 4 sections:
-  - Coin Prices (CoinGecko API)
-  - Market News (CryptoPanic API)
-  - AI Insight of the Day (OpenRouter)
-  - Fun Crypto Meme
-- Thumbs up/down voting on each section
+## 🌐 Live Demo
 
-## Tech Stack
+👉 https://moveo-crypto-advisor-s.vercel.app
 
-| Layer    | Technology                     |
-|----------|--------------------------------|
-| Frontend | React + Vite + TypeScript      |
-| Backend  | Node.js + Express + TypeScript |
-| Database | PostgreSQL (Neon) + Prisma     |
-| Auth     | JWT + bcryptjs                 |
+---
 
-## Status
+## 🚀 Features
 
-Work in progress. See PROJECT_STATUS.md for current state.
+* JWT-based authentication (register / login)
+* Onboarding flow to capture user preferences
+* Personalized dashboard with:
+  * 💰 Coin Prices (CoinGecko API)
+  * 📰 Market News (NewsData.io)
+  * 🤖 AI Insight of the Day (OpenRouter → Mistral 7B)
+  * 😂 Crypto Meme of the Day
+* 👍👎 Voting system for each content section
+* Feedback loop designed for future personalization
+
+---
+
+## 🧠 Architecture Overview
+
+* Frontend communicates with backend via REST API
+* JWT stored in localStorage and attached to every request via Axios interceptor
+* Auth state rehydrated on page load via `GET /api/user/me`
+* Backend uses a JWT middleware for all protected routes
+* External APIs are isolated in a services layer — all with static fallbacks
+* Dashboard data is fetched in parallel using `Promise.all`
+* Votes are stored per user per content item using an upsert pattern
+
+---
+
+## 🛠 Tech Stack
+
+| Layer    | Technology                              |
+|----------|-----------------------------------------|
+| Frontend | React 19 + Vite + TypeScript + shadcn/ui |
+| Backend  | Node.js + Express v5 + TypeScript       |
+| Database | PostgreSQL (Neon) + Prisma ORM          |
+| Auth     | JWT + bcryptjs                          |
+| Styling  | Tailwind CSS v4                         |
+
+---
+
+## ⚙️ Environment Variables
+
+### Backend (set in Render dashboard)
+
+```
+DATABASE_URL=
+JWT_SECRET=
+FRONTEND_URL=
+COINGECKO_API_KEY=
+NEWSDATA_API_KEY=
+OPENROUTER_API_KEY=
+```
+
+### Frontend (set in Vercel dashboard or `.env.production`)
+
+```
+VITE_API_URL=
+```
+
+---
+
+## 🤖 AI Tools Usage
+
+During development, AI tools (Claude) were used for:
+
+* Architecture planning and structuring the project
+* Debugging deployment issues (Vercel + Render)
+* Reviewing authentication flow and API design
+* Improving UI and UX details
+* Validating production configuration (CORS, environment variables)
+
+---
+
+## 🧩 Future Improvements
+
+* Add price charts for selected coins
+* Replace localStorage JWT with httpOnly cookies
+* Add refresh token mechanism
+* Improve personalization based on voting patterns
+
+---
+
+## 📌 Notes
+
+* Deployed on Vercel (frontend) and Render (backend)
+* External APIs all have fallbacks — the dashboard always renders even if APIs are down
+* Votes are stored per user and can be used for future recommendation systems
+* Rate limiting is applied to auth routes (10 requests / 15 min per IP)
