@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "REST API for AI Crypto Advisor — auth, user preferences, personalized dashboard, and voting system",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec ts-node src/server.ts",
@@ -9,7 +9,7 @@
     "start": "node dist/server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "shaked338800",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
