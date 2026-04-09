@@ -254,7 +254,7 @@ function EditPreferencesModal({ current, onClose }: { current: Preference; onClo
           <Button
             variant="outline"
             onClick={onClose}
-            className="flex-1 border-white/20 text-white hover:bg-white/10"
+            className="flex-1 border-white/30 bg-white/10 text-white hover:bg-white/20"
           >
             Cancel
           </Button>
