@@ -71,6 +71,14 @@ VITE_API_URL=
 
 ---
 
+## 🤖 AI Assistance
+
+AI tools were used during development as a supporting resource — for looking up syntax, sanity-checking logic, and getting quick answers in unfamiliar areas (e.g. Prisma upsert patterns, CoinGecko API params, Render deployment config).
+
+All architecture decisions, feature design, and implementation were done independently. AI was treated similarly to documentation or Stack Overflow — a reference, not a driver.
+
+---
+
 ## 🧩 Future Improvements
 
 * Replace localStorage JWT with httpOnly cookies
