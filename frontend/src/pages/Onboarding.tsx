@@ -24,7 +24,8 @@ export default function Onboarding() {
   const { mutate, isPending } = useMutation({
     mutationFn: () => savePreferencesApi(coins, investorType, contentTypes),
     onSuccess: () => {
-      if (user) setUser({ ...user, onboardingCompleted: true });
+      const preference = { coins, investorType, contentTypes };
+      if (user) setUser({ ...user, onboardingCompleted: true, preference });
       navigate('/dashboard');
     },
     onError: (err: any) => {
