@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center relative overflow-hidden px-4">
+    <div className="min-h-screen bg-[#0a0a1a] text-white flex flex-col items-center justify-center relative overflow-hidden px-4">
       <div className="absolute top-[-10rem] left-[-10rem] w-[30rem] h-[30rem] sm:w-[40rem] sm:h-[40rem] bg-purple-700 opacity-20 rounded-full blur-3xl" />
       <div className="absolute bottom-[-10rem] right-[-10rem] w-[30rem] h-[30rem] sm:w-[40rem] sm:h-[40rem] bg-blue-700 opacity-20 rounded-full blur-3xl" />
 
