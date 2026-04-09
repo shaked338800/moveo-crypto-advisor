@@ -71,21 +71,8 @@ VITE_API_URL=
 
 ---
 
-## 🤖 AI Tools Usage
-
-During development, AI tools (Claude) were used for:
-
-* Architecture planning and structuring the project
-* Debugging deployment issues (Vercel + Render)
-* Reviewing authentication flow and API design
-* Improving UI and UX details
-* Validating production configuration (CORS, environment variables)
-
----
-
 ## 🧩 Future Improvements
 
-* Add price charts for selected coins
 * Replace localStorage JWT with httpOnly cookies
 * Add refresh token mechanism
 * Improve personalization based on voting patterns
