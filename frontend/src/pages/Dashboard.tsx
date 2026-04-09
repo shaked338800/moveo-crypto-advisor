@@ -167,9 +167,9 @@ function EditPreferencesModal({ current, onClose }: { current: Preference; onClo
 
   const { mutate, isPending } = useMutation({
     mutationFn: () => savePreferencesApi(coins, investorType, contentTypes),
-    onSuccess: () => {
+    onSuccess: async () => {
       if (user) setUser({ ...user, preference: { coins, investorType, contentTypes } });
-      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      await queryClient.refetchQueries({ queryKey: ['dashboard'] });
       onClose();
     },
     onError: (err: any) => {
