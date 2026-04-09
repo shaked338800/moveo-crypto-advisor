@@ -1,50 +1,59 @@
 # Project Status
 
 ## Stack
-- Frontend: React + Vite + TypeScript + shadcn/ui + React Query
-- Backend: Node.js + Express + TypeScript
+- Frontend: React 19 + Vite + TypeScript + shadcn/ui + React Query + Tailwind CSS v4
+- Backend: Node.js + Express v5 + TypeScript
 - Database: PostgreSQL (Neon) via Prisma ORM
 - Auth: JWT + bcryptjs
 
 ---
 
-## Completed
-- [x] Backend folder structure created
-- [x] Express server running (`src/server.ts`)
-- [x] `GET /api/health` route working
-- [x] All backend packages installed
-- [x] Prisma installed and initialized
-- [x] `schema.prisma` defined (User, Preference, Vote models)
-- [x] Prisma connected to Neon PostgreSQL
-- [x] `prisma migrate dev` ran — tables created in DB
-- [x] Auth packages installed (jsonwebtoken, bcryptjs)
-- [x] Auth controller and routes created and tested (register, login, edge cases)
-- [x] Auth middleware (JWT verification)
-- [x] Onboarding route + controller (GET /api/user/me, POST /api/user/preferences)
-- [x] Frontend scaffold (React + Vite + TypeScript)
-- [x] Tailwind CSS + shadcn/ui installed
-- [x] AuthContext + ProtectedRoute
-- [x] API layer with axios (auth.api.ts)
-- [x] Home page
-- [x] Login page
-- [x] Signup page
-- [x] Onboarding page (3-step form)
-- [x] Dashboard placeholder
-- [x] Mono-repo setup (frontend + backend under one git repo)
+## Status: COMPLETE — Deployed to production
 
-## In Progress
-- [ ] Deployment — environment variables need to be set in Render + Vercel dashboards
-
-## Not Started
-- (nothing — all features implemented)
+Frontend: https://moveo-crypto-advisor-s.vercel.app (Vercel)
+Backend: https://moveo-crypto-advisor.onrender.com (Render)
 
 ---
 
-## Completed (recently confirmed)
-- [x] Dashboard routes — backend (coins, news, AI, meme)
-- [x] Dashboard page — frontend (4 sections with voting)
-- [x] Votes route + controller (GET /api/votes, POST /api/votes with upsert)
-- [x] Services: CoinGecko, NewsData, OpenRouter AI, static meme list (all with fallbacks)
+## All Completed
 
-## Current Goal
-Deploy — set production env vars in Render (backend) and Vercel (frontend).
+### Backend
+- [x] Express server (`src/server.ts`) with CORS, Morgan, env validation at startup
+- [x] `GET /api/health`
+- [x] Prisma schema — User, Preference, Vote models
+- [x] Neon PostgreSQL connected + migrations run
+- [x] Auth routes — `POST /api/auth/register`, `POST /api/auth/login` (rate limited)
+- [x] Auth middleware — JWT verification
+- [x] User routes — `GET /api/user/me`, `POST /api/user/preferences`
+- [x] Dashboard route — `GET /api/dashboard` (parallel fetch of all 4 sections)
+- [x] Votes routes — `GET /api/votes`, `POST /api/votes` (upsert)
+- [x] Services: CoinGecko, NewsData, OpenRouter (Mistral 7B), meme — all with fallbacks
+- [x] Zod validation on all routes
+
+### Frontend
+- [x] React + Vite scaffold with path aliases (`@/`)
+- [x] Tailwind CSS v4 + shadcn/ui
+- [x] AuthContext — token rehydration via `GET /api/user/me` on mount
+- [x] ProtectedRoute — auth guard + onboarding gate
+- [x] Axios instance with Bearer token interceptor
+- [x] Home page
+- [x] Login page (with client-side Zod validation)
+- [x] Signup page (with client-side Zod validation)
+- [x] Onboarding page — 3-step form (coins, investor type, content types)
+- [x] Dashboard page — 4 sections: Coin Prices, AI Insight, Market News, Meme
+- [x] Voting UI — thumbs up/down per section, state persisted via GET on load
+- [x] Feedback Pipeline explainer card
+
+### Deployment
+- [x] Vercel config (`vercel.json`) — monorepo build + SPA rewrite rule
+- [x] `frontend/.env.production` — bakes production API URL into Vite build
+- [x] Render env vars set — `FRONTEND_URL`, `DATABASE_URL`, `JWT_SECRET`, all API keys
+- [x] README updated
+
+---
+
+## Known Limitations (intentional for scope)
+- JWT stored in localStorage (not httpOnly cookies)
+- No token refresh / revocation
+- Meme section uses a static list, not a live API
+- No price charts
