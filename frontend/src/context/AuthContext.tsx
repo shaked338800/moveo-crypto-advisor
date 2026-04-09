@@ -2,11 +2,18 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { getMeApi } from '@/api/auth.api';
 
+export interface Preference {
+  coins: string[];
+  investorType: string;
+  contentTypes: string[];
+}
+
 interface User {
   id: number;
   name: string;
   email: string;
   onboardingCompleted: boolean;
+  preference: Preference | null;
 }
 
 interface AuthContextType {

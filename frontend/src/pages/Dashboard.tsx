@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/context/AuthContext';
-import { getDashboardApi, getVotesApi, submitVoteApi } from '@/api/auth.api';
+import type { Preference } from '@/context/AuthContext';
+import { getDashboardApi, getVotesApi, submitVoteApi, savePreferencesApi } from '@/api/auth.api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -37,6 +38,128 @@ interface DashboardData {
   news: NewsArticle[];
   aiInsight: string;
   meme: Meme;
+}
+
+const COINS = ['Bitcoin', 'Ethereum', 'Solana', 'BNB', 'XRP', 'Dogecoin'];
+const INVESTOR_TYPES = ['HODLer', 'Day Trader', 'NFT Collector', 'DeFi Explorer'];
+const CONTENT_TYPES = ['Market News', 'Charts', 'Social', 'Fun'];
+
+function EditPreferencesModal({ current, onClose }: { current: Preference; onClose: () => void }) {
+  const { setUser, user } = useAuth();
+  const queryClient = useQueryClient();
+
+  const [coins, setCoins] = useState<string[]>(current.coins);
+  const [investorType, setInvestorType] = useState(current.investorType);
+  const [contentTypes, setContentTypes] = useState<string[]>(current.contentTypes);
+  const [error, setError] = useState('');
+
+  const toggle = (list: string[], setList: (v: string[]) => void, item: string) =>
+    setList(list.includes(item) ? list.filter((i) => i !== item) : [...list, item]);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => savePreferencesApi(coins, investorType, contentTypes),
+    onSuccess: () => {
+      if (user) setUser({ ...user, preference: { coins, investorType, contentTypes } });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      onClose();
+    },
+    onError: (err: any) => {
+      setError(err.response?.data?.error || 'Failed to save preferences.');
+    },
+  });
+
+  const canSave = coins.length > 0 && !!investorType && contentTypes.length > 0;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-md bg-[#0f0f1f] border border-white/10 rounded-2xl p-6 space-y-6 shadow-2xl">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white">Edit Preferences</h2>
+          <button onClick={onClose} className="text-white/40 hover:text-white text-xl leading-none">&times;</button>
+        </div>
+
+        {/* Coins */}
+        <div>
+          <p className="text-sm text-white/60 mb-2">Coins</p>
+          <div className="grid grid-cols-3 gap-2">
+            {COINS.map((coin) => (
+              <button
+                key={coin}
+                onClick={() => toggle(coins, setCoins, coin)}
+                className={`py-2 px-3 rounded-lg border text-xs font-medium transition-all ${
+                  coins.includes(coin)
+                    ? 'bg-white text-black border-white'
+                    : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                }`}
+              >
+                {coin}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Investor Type */}
+        <div>
+          <p className="text-sm text-white/60 mb-2">Investor Type</p>
+          <div className="grid grid-cols-2 gap-2">
+            {INVESTOR_TYPES.map((type) => (
+              <button
+                key={type}
+                onClick={() => setInvestorType(type)}
+                className={`py-2 px-3 rounded-lg border text-xs font-medium transition-all ${
+                  investorType === type
+                    ? 'bg-white text-black border-white'
+                    : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                }`}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content Types */}
+        <div>
+          <p className="text-sm text-white/60 mb-2">Content Types</p>
+          <div className="grid grid-cols-2 gap-2">
+            {CONTENT_TYPES.map((type) => (
+              <button
+                key={type}
+                onClick={() => toggle(contentTypes, setContentTypes, type)}
+                className={`py-2 px-3 rounded-lg border text-xs font-medium transition-all ${
+                  contentTypes.includes(type)
+                    ? 'bg-white text-black border-white'
+                    : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                }`}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {error && <p className="text-red-400 text-xs">{error}</p>}
+
+        <div className="flex gap-3 pt-1">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="flex-1 border-white/20 text-white hover:bg-white/10"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => mutate()}
+            disabled={!canSave || isPending}
+            className="flex-1 bg-white text-black hover:bg-white/90 font-semibold"
+          >
+            {isPending ? 'Saving...' : 'Save'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function FeedbackPipelineCard() {
@@ -128,6 +251,7 @@ function VoteButtons({ sectionType, contentId, initialVote = null }: { sectionTy
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [showEditPrefs, setShowEditPrefs] = useState(false);
 
   const { data, isLoading, isError } = useQuery<DashboardData>({
     queryKey: ['dashboard'],
@@ -149,20 +273,34 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#0a0a1a] text-white">
+      {showEditPrefs && user?.preference && (
+        <EditPreferencesModal current={user.preference} onClose={() => setShowEditPrefs(false)} />
+      )}
+
       {/* Header */}
       <header className="border-b border-white/10 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
         <div>
           <h1 className="text-lg sm:text-xl font-bold">CryptoAdvisor</h1>
           <p className="text-white/50 text-xs sm:text-sm">Welcome back, {user?.name}</p>
         </div>
-        <Button
-          onClick={handleLogout}
-          variant="outline"
-          size="sm"
-          className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-black text-xs sm:text-sm"
-        >
-          Logout
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => setShowEditPrefs(true)}
+            variant="outline"
+            size="sm"
+            className="border-white/30 text-white/70 bg-transparent hover:bg-white/10 text-xs sm:text-sm"
+          >
+            Edit Preferences
+          </Button>
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            size="sm"
+            className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-black text-xs sm:text-sm"
+          >
+            Logout
+          </Button>
+        </div>
       </header>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
