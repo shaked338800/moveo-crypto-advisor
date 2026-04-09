@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/context/AuthContext';
 import type { Preference } from '@/context/AuthContext';
-import { getDashboardApi, getVotesApi, submitVoteApi, savePreferencesApi } from '@/api/auth.api';
+import { getDashboardApi, getVotesApi, submitVoteApi, savePreferencesApi, getCoinChartApi } from '@/api/auth.api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -38,6 +38,115 @@ interface DashboardData {
   news: NewsArticle[];
   aiInsight: string;
   meme: Meme;
+}
+
+function SparkLine({ points }: { points: [number, number][] }) {
+  if (points.length < 2) return null;
+  const prices = points.map(([, p]) => p);
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  const range = max - min || 1;
+  const W = 480;
+  const H = 100;
+  const toX = (i: number) => (i / (points.length - 1)) * W;
+  const toY = (p: number) => H - ((p - min) / range) * H * 0.85 - H * 0.075;
+  const d = points.map(([, p], i) => `${i === 0 ? 'M' : 'L'} ${toX(i).toFixed(1)} ${toY(p).toFixed(1)}`).join(' ');
+  const area = `${d} L ${W} ${H} L 0 ${H} Z`;
+  const rising = prices[prices.length - 1] >= prices[0];
+  const color = rising ? '#4ade80' : '#f87171';
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" preserveAspectRatio="none" style={{ height: 100 }}>
+      <defs>
+        <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.25" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={area} fill="url(#cg)" />
+      <path d={d} fill="none" stroke={color} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CoinChartModal({ coin, onClose }: { coin: Coin; onClose: () => void }) {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['chart', coin.id],
+    queryFn: () => getCoinChartApi(coin.id),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const prices = data?.prices ?? [];
+  const priceValues = prices.map(([, p]) => p);
+  const minPrice = priceValues.length ? Math.min(...priceValues) : 0;
+  const maxPrice = priceValues.length ? Math.max(...priceValues) : 0;
+  const rising = priceValues.length >= 2 && priceValues[priceValues.length - 1] >= priceValues[0];
+
+  const formatDate = (ts: number) =>
+    new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-lg bg-[#0f0f1f] border border-white/10 rounded-2xl p-6 shadow-2xl">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-3">
+            {coin.image && <img src={coin.image} alt={coin.name} className="w-8 h-8 rounded-full" />}
+            <div>
+              <h2 className="text-base font-bold text-white">{coin.name}</h2>
+              <p className="text-white/40 text-xs">{coin.symbol}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-white/40 hover:text-white text-xl leading-none">&times;</button>
+        </div>
+
+        {/* Price */}
+        <div className="mb-4">
+          <p className="text-2xl font-semibold text-white">${coin.price.toLocaleString()}</p>
+          <p className={`text-sm font-medium mt-0.5 ${coin.change24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+            {coin.change24h >= 0 ? '+' : ''}{coin.change24h?.toFixed(2)}% (24h)
+          </p>
+        </div>
+
+        {/* Chart */}
+        <div className="bg-white/5 rounded-xl p-3 mb-3">
+          {isLoading && (
+            <div className="h-[100px] flex items-center justify-center">
+              <p className="text-white/30 text-sm animate-pulse">Loading chart...</p>
+            </div>
+          )}
+          {isError && (
+            <div className="h-[100px] flex items-center justify-center">
+              <p className="text-white/30 text-sm">Chart unavailable</p>
+            </div>
+          )}
+          {!isLoading && !isError && prices.length >= 2 && <SparkLine points={prices} />}
+          {!isLoading && !isError && prices.length < 2 && (
+            <div className="h-[100px] flex items-center justify-center">
+              <p className="text-white/30 text-sm">Not enough data</p>
+            </div>
+          )}
+        </div>
+
+        {/* X-axis labels + range info */}
+        {prices.length >= 2 && (
+          <div className="flex justify-between text-white/30 text-xs px-1 mb-3">
+            <span>{formatDate(prices[0][0])}</span>
+            <span className={rising ? 'text-green-400/60' : 'text-red-400/60'}>7-day</span>
+            <span>{formatDate(prices[prices.length - 1][0])}</span>
+          </div>
+        )}
+
+        {/* Min / Max */}
+        {priceValues.length >= 2 && (
+          <div className="flex gap-4 text-xs text-white/40 px-1">
+            <span>Low: <span className="text-white/60">${minPrice.toLocaleString()}</span></span>
+            <span>High: <span className="text-white/60">${maxPrice.toLocaleString()}</span></span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 const COINS = ['Bitcoin', 'Ethereum', 'Solana', 'BNB', 'XRP', 'Dogecoin'];
@@ -252,6 +361,7 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showEditPrefs, setShowEditPrefs] = useState(false);
+  const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null);
 
   const { data, isLoading, isError } = useQuery<DashboardData>({
     queryKey: ['dashboard'],
@@ -273,6 +383,9 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#0a0a1a] text-white">
+      {selectedCoin && (
+        <CoinChartModal coin={selectedCoin} onClose={() => setSelectedCoin(null)} />
+      )}
       {showEditPrefs && user?.preference && (
         <EditPreferencesModal current={user.preference} onClose={() => setShowEditPrefs(false)} />
       )}
@@ -333,12 +446,16 @@ export default function Dashboard() {
                   <p className="text-white/40 text-sm">No coin data available.</p>
                 )}
                 {data.coinPrices.map((coin) => (
-                  <div key={coin.id} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                  <button
+                    key={coin.id}
+                    onClick={() => setSelectedCoin(coin)}
+                    className="w-full flex items-center justify-between py-2 border-b border-white/5 last:border-0 hover:bg-white/5 rounded-lg px-2 -mx-2 transition-colors text-left group"
+                  >
                     <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                       <img src={coin.image} alt={coin.name} className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex-shrink-0" />
                       <div className="min-w-0">
                         <p className="font-medium text-xs sm:text-sm truncate">{coin.name}</p>
-                        <p className="text-white/40 text-xs">{coin.symbol}</p>
+                        <p className="text-white/40 text-xs group-hover:text-white/60 transition-colors">View chart →</p>
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0 ml-2">
@@ -347,7 +464,7 @@ export default function Dashboard() {
                         {coin.change24h >= 0 ? '+' : ''}{coin.change24h?.toFixed(2)}%
                       </p>
                     </div>
-                  </div>
+                  </button>
                 ))}
                 <VoteButtons sectionType="coins" contentId="coin-prices" initialVote={getVote('coins', 'coin-prices')} />
               </CardContent>

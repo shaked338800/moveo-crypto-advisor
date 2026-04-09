@@ -39,3 +39,6 @@ export const getVotesApi = () =>
 
 export const submitVoteApi = (sectionType: string, contentId: string, vote: number) =>
   api.post('/api/votes', { sectionType, contentId, vote }).then((r) => r.data);
+
+export const getCoinChartApi = (coinId: string): Promise<{ prices: [number, number][] }> =>
+  api.get(`/api/dashboard/chart/${coinId}`).then((r) => r.data);

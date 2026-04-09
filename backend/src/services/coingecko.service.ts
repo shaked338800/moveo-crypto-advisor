@@ -45,6 +45,22 @@ export const getCoinPrices = async (coins: string[]) => {
   }
 };
 
+// Returns [[timestamp_ms, price], ...] for the last 7 days (daily interval)
+export const getCoinChart = async (coinId: string): Promise<[number, number][]> => {
+  try {
+    const { data } = await axios.get(
+      `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart`,
+      {
+        params: { vs_currency: 'usd', days: 7, interval: 'daily' },
+        headers: { 'x-cg-demo-api-key': process.env.COINGECKO_API_KEY },
+      }
+    );
+    return data.prices as [number, number][];
+  } catch {
+    return [];
+  }
+};
+
 const getFallbackCoins = (coins: string[]) => {
   const fallback: Record<string, object> = {
     bitcoin:  { id: 'bitcoin',      name: 'Bitcoin',  symbol: 'BTC', price: 60000, change24h: 0, image: '', marketCap: 1_200_000_000_000 },

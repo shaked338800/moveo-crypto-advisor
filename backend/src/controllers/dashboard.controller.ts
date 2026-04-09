@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
 import prisma from '../prisma';
-import { getCoinPrices } from '../services/coingecko.service';
+import { getCoinPrices, getCoinChart } from '../services/coingecko.service';
 import { getCryptoNews } from '../services/news.service';
 import { getAiInsight } from '../services/ai.service';
 import { getRandomMeme } from '../services/meme.service';
@@ -32,4 +32,10 @@ export const getDashboard = async (req: AuthRequest, res: Response) => {
     console.error('Dashboard error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
+};
+
+export const getChart = async (req: AuthRequest, res: Response) => {
+  const coinId = req.params.coinId as string;
+  const prices = await getCoinChart(coinId);
+  res.json({ prices });
 };
